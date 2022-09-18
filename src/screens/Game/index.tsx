@@ -25,7 +25,13 @@ export function Game() {
   }
 
   const [duos, setDuos] = useState<DuoCardProps[]>([])
-  const [discordDuoSelected, setDiscordDuoSelected] = useState('0')
+  const [discordDuoSelected, setDiscordDuoSelected] = useState('')
+
+  async function getDiscordUser(adsId: string) {
+    fetch(`http://192.168.100.3:3333/ads/${adsId}/discord`)
+    .then(response => response.json())
+    .then(data => setDiscordDuoSelected(data.discord))
+  }
 
   useEffect(() => {
     fetch(`http://192.168.100.3:3333/games/${game.id}/ads`)
@@ -59,7 +65,7 @@ export function Game() {
           showsHorizontalScrollIndicator
           keyExtractor={item => item.id}
           renderItem={({item}) => (
-            <DuoCard data={item} onConnect={() => { }} />
+            <DuoCard data={item} onConnect={() => getDiscordUser(item.id)} />
           )}
           ListEmptyComponent={() => (
             <Text style={styles.emptyListText}>
@@ -70,7 +76,7 @@ export function Game() {
 
         <DuoMatch 
           visible={discordDuoSelected.length > 0}
-          discord="Moreno#0001"
+          discord={discordDuoSelected}
           onClose={() => setDiscordDuoSelected('')}
         />
 
